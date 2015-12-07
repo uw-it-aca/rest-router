@@ -55,3 +55,17 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# virtualenv
+/bin
+/include
+/local
+pip-selfcheck.json
+
+# project
+/manage.py
+/project
+
+# vim
+*.swp
+
