@@ -65,6 +65,7 @@ pip-selfcheck.json
 # project
 /manage.py
 /project
+/db.sqlite3
 
 # vim
 *.swp
