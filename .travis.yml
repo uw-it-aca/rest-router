@@ -10,3 +10,4 @@ install:
 script:
     - pep8 rest_router
     - python -m compileall rest_router
+    - python manage.py test rest_router
