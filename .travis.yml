@@ -6,8 +6,11 @@ python:
 install:
     - pip install pep8
     - pip install -r requirements.txt
+    - pip install python-coveralls
     - cp travis-ci/manage.py manage.py
 script:
     - pep8 rest_router
     - python -m compileall rest_router
-    - python manage.py test rest_router
+    - coverage run --source=rest_router manage.py test rest_router
+after_script:
+    - coveralls
