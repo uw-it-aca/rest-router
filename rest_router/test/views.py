@@ -12,7 +12,9 @@ ACCESS_PATH = os.path.join(os.path.dirname(__file__),
 
 # Overriding urllib methods here, so we can test as much as possible...
 def override_connection(*args, **kwargs):
-    class FakeResponse(object):
+    class FakeResponse(dict):
+        def __init__(self, *args, **kwargs):
+            super(FakeResponse, self).__init__(*args, **kwargs)
         status_code = 200
         content = "OK"
         headers = {}
@@ -35,6 +37,10 @@ def override_connection(*args, **kwargs):
 
             if method == "POST":
                 response.content = "Method POST"
+
+            # Just reflecting back all headers given to us.
+            for header in kwargs["headers"]:
+                response[header] = kwargs["headers"][header]
             return response
     return FakeConn()
 
@@ -112,5 +118,23 @@ class TestProxy(TestCase):
         self.assertEquals(response.status_code, 200)
         content = "Method PATCH"
         self.assertEquals(response.content, content)
+
+        urllib3.connection_from_url = original
+
+    def test_headers(self):
+        original = urllib3.connection_from_url
+
+        urllib3.connection_from_url = override_connection
+
+        client = Client()
+        response = client.get(reverse('proxy',
+                                      kwargs={"service": "valid2",
+                                              "url": "ok"}),
+                              SSL_CLIENT_S_DN_CN="ok_service",
+                              X_CUSTOM_REFLECT_TEST="Test Value")
+
+        self.assertEquals(response.status_code, 200)
+
+        self.assertEquals(response["X-CUSTOM-REFLECT-TEST"], "Test Value")
 
         urllib3.connection_from_url = original

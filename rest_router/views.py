@@ -15,7 +15,12 @@ def proxy(request, service, url):
 
     method = request.method
     body = request.body
-    response = get_response(client_service, service, method, url, body, {})
+
+    headers = {}
+    for header in request.META:
+        headers[header] = request.META[header]
+    response = get_response(client_service, service, method, url, body,
+                            headers)
     return response
 
 
