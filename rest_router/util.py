@@ -1,15 +1,14 @@
 from django.conf import settings
 import json
 import urllib3
-from urlparse import urlparse
 from django.http import HttpResponse
 import six
 import re
 
 if six.PY2:
-    from urlparse import urljoin
+    from urlparse import urljoin, urlparse
 else:
-    from urllib.parse import urljoin
+    from urllib.parse import urljoin, urlparse
 
 
 def get_service_name(request):
