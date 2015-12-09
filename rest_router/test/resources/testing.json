@@ -1,3 +1,17 @@
 {
-    "ok_service": { "valid1": true, "valid2": true }
+    "clients": {
+        "ok_service": {
+            "services": { "valid1": true, "valid2": true },
+            "cert_path": "",
+            "key_path": ""
+        },
+        "override_timeout": {
+            "services": { "valid1": true },
+            "timeout_override": { "valid1": 60 }
+        }
+    },
+    "services": {
+        "valid1": { "url": "http://localhost/testing/v1/" },
+        "valid2": { "url": "http://localhost/testing/v2/", "timeout": 20 }
+    }
 }

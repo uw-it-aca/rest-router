@@ -14,5 +14,5 @@ setup(name='Rest-Router',
       include_package_data=True,  # use MANIFEST.in during install
       url='https://github.com/uw-it-aca/rest-router',
       description='',
-      install_requires=['Django==1.9'],
+      install_requires=['Django==1.9', 'urllib3'],
      )
