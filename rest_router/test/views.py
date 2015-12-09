@@ -54,7 +54,7 @@ class TestProxy(TestCase):
                               SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 403)
-        error = "Your app doesn't have access to nogo"
+        error = b"Your app doesn't have access to nogo"
         self.assertEquals(response.content, error)
 
     def test_no_client_id(self):
@@ -65,7 +65,7 @@ class TestProxy(TestCase):
 
         self.assertEquals(response.status_code, 403)
 
-        error = "No client identification provided"
+        error = b"No client identification provided"
         self.assertEquals(response.content, error)
 
     def test_ok_service1(self):
@@ -80,7 +80,7 @@ class TestProxy(TestCase):
                               SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 200)
-        content = "This is valid service #1"
+        content = b"This is valid service #1"
         self.assertEquals(response.content, content)
 
         response = client.put(reverse('proxy',
@@ -89,7 +89,7 @@ class TestProxy(TestCase):
                               SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 200)
-        content = "Method PUT"
+        content = b"Method PUT"
         self.assertEquals(response.content, content)
 
         response = client.delete(reverse('proxy',
@@ -98,7 +98,7 @@ class TestProxy(TestCase):
                                  SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 200)
-        content = "Method DELETE"
+        content = b"Method DELETE"
         self.assertEquals(response.content, content)
 
         response = client.post(reverse('proxy',
@@ -107,7 +107,7 @@ class TestProxy(TestCase):
                                SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 200)
-        content = "Method POST"
+        content = b"Method POST"
         self.assertEquals(response.content, content)
 
         response = client.patch(reverse('proxy',
@@ -116,7 +116,7 @@ class TestProxy(TestCase):
                                 SSL_CLIENT_S_DN_CN="ok_service")
 
         self.assertEquals(response.status_code, 200)
-        content = "Method PATCH"
+        content = b"Method PATCH"
         self.assertEquals(response.content, content)
 
         urllib3.connection_from_url = original
