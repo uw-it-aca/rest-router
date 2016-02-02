@@ -22,12 +22,8 @@ def proxy(request, service, url):
     for header in request.META:
         headers[header] = request.META[header]
 
-    try:
-        response = get_response(client_service, service, method, url, body,
-                                headers)
-    except Exception as ex:
-        print "E: ", ex
-        raise
+    response = get_response(client_service, service, method, url, body,
+                            headers)
 
     return response
 
