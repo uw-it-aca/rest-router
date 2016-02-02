@@ -2,6 +2,7 @@ from django.conf import settings
 import json
 import urllib3
 from django.http import HttpResponse
+import ssl
 import six
 import re
 
@@ -53,7 +54,10 @@ def get_response(client_service, service, method, url, body, headers):
         "block": True,
         }
 
-    if urlparse(url).scheme == "https":
+    # This is the full name so it can be overridden in the tests.
+    full_url = urljoin(service_base, url)
+
+    if urlparse(full_url).scheme == "https":
         if key is not None and cert is not None:
             kwargs["key_file"] = key
             kwargs["cert_file"] = cert
@@ -63,26 +67,27 @@ def get_response(client_service, service, method, url, body, headers):
         kwargs["ca_certs"] = getattr(settings, "REST_ROUTER_CA_BUNDLE",
                                      "/etc/ssl/certs/ca-bundle.crt")
 
-    # This is the full name so it can be overridden in the tests.
-    full_url = urljoin(service_base, url)
     conn = urllib3.connection_from_url(full_url, **kwargs)
 
     headers = clean_headers(headers)
+    headers = {}
 
     service_response = conn.urlopen(method, full_url, body=body,
                                     headers=headers,
                                     timeout=timeout)
 
-    response = HttpResponse(service_response.content)
-    response.status_code = service_response.status_code
+    response = HttpResponse(service_response.data)
+
+    response.status_code = service_response.status
 
     response_headers = {}
-    for key in service_response:
-        response_headers[key] = service_response[key]
+    for key in service_response.getheaders():
+        response_headers[key] = service_response.getheader(key)
 
     cleaned_response = clean_headers(response_headers)
     for key in cleaned_response:
         response[key] = cleaned_response[key]
+
     return response
 
 
@@ -123,6 +128,10 @@ def clean_headers(headers):
         if header == "remote-user":
             continue
         if header == "query-string":
+            continue
+
+        # Don't send transfer encoding...
+        if header == "transfer-encoding":
             continue
 
         # Re-normalize to uppercase

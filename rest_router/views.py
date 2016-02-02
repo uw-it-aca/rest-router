@@ -16,11 +16,19 @@ def proxy(request, service, url):
     method = request.method
     body = request.body
 
+    url += "?%s" % request.META["QUERY_STRING"]
+
     headers = {}
     for header in request.META:
         headers[header] = request.META[header]
-    response = get_response(client_service, service, method, url, body,
-                            headers)
+
+    try:
+        response = get_response(client_service, service, method, url, body,
+                                headers)
+    except Exception as ex:
+        print "E: ", ex
+        raise
+
     return response
 
 
